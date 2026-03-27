@@ -2,6 +2,8 @@ package impl;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +26,12 @@ public class SemanticCrawlerImpl implements SemanticCrawler {
     
     @Override
     public void search(org.apache.jena.rdf.model.Model graph, String resourceURI) {
+        CharsetEncoder enc = Charset.forName("ISO-8859-1").newEncoder();
+        if (!enc.canEncode(resourceURI)) {
+            
+            return;
+        }
+
         if (visitados.contains(resourceURI)) {
             return;
         }
@@ -100,17 +108,17 @@ public class SemanticCrawlerImpl implements SemanticCrawler {
     }
 
     private void coletarBlankNode(Model docAtual, RDFNode no, Model graph) {
-    StmtIterator stmts = docAtual.listStatements(no.asResource(), null, (RDFNode) null);
-    
-    while (stmts.hasNext()) {
-        Statement stmt = stmts.nextStatement();
-        graph.add(stmt);
+        StmtIterator stmts = docAtual.listStatements(no.asResource(), null, (RDFNode) null);
         
-        // se o objeto também for blank node, repete recursivamente
-        if (stmt.getObject().isAnon()) {
-            coletarBlankNode(docAtual, stmt.getObject(), graph);
+        while (stmts.hasNext()) {
+            Statement stmt = stmts.nextStatement();
+            graph.add(stmt);
+            
+            // se o objeto também for blank node, repete recursivamente
+            if (stmt.getObject().isAnon()) {
+                coletarBlankNode(docAtual, stmt.getObject(), graph);
+            }
         }
     }
-}
     
 }
