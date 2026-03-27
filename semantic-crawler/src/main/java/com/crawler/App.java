@@ -10,7 +10,7 @@ public class App {
         Model graph = ModelFactory.createDefaultModel();
         SemanticCrawler crawler = new SemanticCrawlerImpl();
         
-        crawler.search(graph, "http://dbpedia.org/resource/Zico");
+        crawler.search(graph, "http://dbpedia.org/resource/Garrincha");
         
         System.out.println("Triplas coletadas: " + graph.size());
         graph.write(System.out, "TURTLE");
